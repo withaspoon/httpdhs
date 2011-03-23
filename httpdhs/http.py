@@ -62,7 +62,10 @@ class ServerHandler(object):
         self.db = DatabaseHandler(controller)
 
 class HttpClient(object):
-    """HTTP Client for querying the key value database using REST"""
+    """HTTP Client for querying the key value database using REST.
+    
+    set_without_replication is used internally for updating a key without
+    causing an infinite loop of requests."""
     
     def get(self, address, key):
         result = self._http_get(address, key)
