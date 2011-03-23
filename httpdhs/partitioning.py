@@ -4,7 +4,6 @@ import bisect
 class Sha1HashCodeGenerator(object):
     def hash(self, what):
         return sha.new(what).hexdigest()
-        
 
 class ConsistentHashingPartitioningStrategy(object):
     def __init__(self, node_addresses, replicas, hash_code_generator = Sha1HashCodeGenerator()):

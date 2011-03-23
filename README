@@ -7,3 +7,7 @@ REST
 hantera döda noder
 noder istället för ful array i partioner
 obalanserad ring
+
+Install
+pip install cherrypy
+pip install routes

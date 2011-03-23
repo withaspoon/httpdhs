@@ -1,4 +1,5 @@
 from node import NodeDownError
+from http import HttpClient
 
 class KeyValueDatabase(object):
     def __init__(self):
@@ -12,7 +13,7 @@ class KeyValueDatabase(object):
             return self._table[key]
 
 class KeyValueController(object):
-    def __init__(self, node_name, partitioning_strategy, client, database):
+    def __init__(self, node_name, partitioning_strategy, client=HttpClient(), database=KeyValueDatabase()):
         self._node_name = node_name
         self._partitioning_strategy = partitioning_strategy
         self._client = client
