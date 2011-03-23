@@ -30,7 +30,7 @@ class DatabaseHandler(object):
         if value:
             return "%s=%s" % (key, value)
         else:
-            return 'not_found'
+            raise cherrypy.HTTPError(404)
     
     def create(self, key, value, direct='false'):
         if direct == 'true':
@@ -47,7 +47,7 @@ class ServerHandler(object):
 class HttpClient(object):
     def get(self, address, key):
         result = self._http_get(address, key)
-        if result != "not_found":
+        if "=" in result:
             return result.split("=")[1]
 
     def set_without_replication(self, address, key, value):
