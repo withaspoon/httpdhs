@@ -51,10 +51,10 @@ class HttpClient(object):
             return result.split("=")[1]
 
     def set_without_replication(self, address, key, value):
-        self._http_post(address, key, {'value': value, 'direct': 'true'})
+        self._http_put(address, key, {'value': value, 'direct': 'true'})
 
     def set(self, address, key, value):
-        self._http_post(address, key, {'value': value})
+        self._http_put(address, key, {'value': value})
 
     def _http_get(self, address, key):
         try:
@@ -62,7 +62,7 @@ class HttpClient(object):
         except urllib2.URLError:
             raise NodeDownError()
 
-    def _http_post(self, address, key, params):
+    def _http_put(self, address, key, params):
         try:
             data = self._utf8_query_string_from_dict(params)
             request = urllib2.Request("http://%s/db/%s" % (address, key), data)
