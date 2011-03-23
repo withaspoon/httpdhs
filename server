@@ -1,28 +1,5 @@
 #!/usr/bin/env python
 
-from httpdhs.http import HttpServer
-from httpdhs.partitioning import ConsistentHashingPartitioningStrategy
-from httpdhs.backend import KeyValueController
-from optparse import OptionParser
+from httpdhs.cli import CliController
 
-parser = OptionParser()
-parser.add_option("-p", "--port", dest="port", help="run on port PORT", metavar="PORT")
-parser.add_option("-c", "--conf", dest="conf", help="configuration file for the cluster")
-parser.add_option("-r", "--replicas", dest="replicas", help="number of replicas", default=2)
-parser.add_option("-t", "--threads", dest="threads", help="maximum number of threads", default=50)
-parser.add_option("-P", "--production", action="store_true", dest="production", help="run in production environment")
-(options, args) = parser.parse_args()
-
-config_file = open(options.conf)
-addresses = [address.strip("\n") for address in config_file.readlines()]
-
-strategy = ConsistentHashingPartitioningStrategy(addresses, int(options.replicas))
-node_name = "localhost:%s" % (options.port)
-controller = KeyValueController(node_name, strategy)
-
-print  "Started server %s" % node_name
-env = None
-if options.production:
-    env = 'production'
-HttpServer(controller).run(int(options.port), int(options.threads), env)
-print "Done."
+CliController().run()
