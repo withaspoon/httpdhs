@@ -34,22 +34,28 @@ class KeyValueController(object):
     def set(self, key, value):
         for address in self._addresses_for_key(key):
             try:
-                if address == self._node_name:
-                    self._database.set(key, value)
-                else:
-                    self._client.set_without_replication(address, key, value)
+                self._set_for_address(address, key, value)
             except NodeDownError:
                 pass
+    
+    def _set_for_address(self, address, key, value):
+        if address == self._node_name:
+            self._database.set(key, value)
+        else:
+            self._client.set_without_replication(address, key, value)
     
     def set_direct(self, key, value):
         self._database.set(key, value)
         
     def get(self, key):
         for address in self._addresses_for_key(key):
-            if address == self._node_name:
-                return self._database.get(key)
-            else:
-                try:
-                    return self._client.get(address, key)
-                except NodeDownError:
-                    pass
+            try:
+                return self._get_for_address(address, key)
+            except NodeDownError:
+                pass
+    
+    def _get_for_address(self, address, key):
+        if address == self._node_name:
+            return self._database.get(key)
+        else:
+            return self._client.get(address, key)
