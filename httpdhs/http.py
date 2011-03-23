@@ -11,14 +11,18 @@ class HttpServer(object):
     Sets up routes and configures the web server for database access. After
     calling run the method never returns."""
     
-    def __init__(self, backend):
-        self._backend = backend
+    def __init__(self, controller):
+        self._controller = controller
     
-    def run(self, port, max_threads):
-        root = ServerHandler(self._backend)
+    def run(self, port, max_threads, env):
+        root = ServerHandler(self._controller)
         dispatcher = self._create_dispatcher(root)
         cherrypy.quickstart(root, '/', {
-            'global': { 'server.socket_port': port, 'server.thread_pool': max_threads },
+            'global': {
+                'server.socket_port': port,
+                'server.thread_pool': max_threads,
+                'environment': env
+            },
             '/db': { 'request.dispatch': dispatcher }
         })
     
@@ -33,11 +37,11 @@ class DatabaseHandler(object):
     
     exposed = True
     
-    def __init__(self, backend):
-        self._backend = backend
+    def __init__(self, controller):
+        self._controller = controller
     
     def read(self, key):
-        value = self._backend.get(key)
+        value = self._controller.get(key)
         if value:
             return "%s=%s" % (key, value)
         else:
@@ -45,17 +49,17 @@ class DatabaseHandler(object):
     
     def update(self, key, value, direct='false'):
         if direct == 'true':
-            self._backend.set_direct(key, value)
+            self._controller.set_direct(key, value)
         else:
-            self._backend.set(key, value)
+            self._controller.set(key, value)
         return "%s=%s" % (key, value)
         
 
 class ServerHandler(object):
     """Root cherrypy handler"""
     
-    def __init__(self, backend):
-        self.db = DatabaseHandler(backend)
+    def __init__(self, controller):
+        self.db = DatabaseHandler(controller)
 
 class HttpClient(object):
     """HTTP Client for querying the key value database using REST"""
