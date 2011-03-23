@@ -7,14 +7,15 @@ from httpdhs.node import NodeDownError
 from httpdhs.http import HttpClient
 import multiprocessing
 
-postalcodes = csv.reader(open('postalcodes.csv', 'r'), delimiter='\t')
+postalcodes = csv.reader(open('data/postalcodes.csv', 'r'), delimiter='\t')
 key_value_pairs = list(postalcodes)
 
-nodes = ["localhost:1234", "localhost:1235", "localhost:1236"]
+config_file = open("httpdhs.conf")
+addresses = [address.strip("\n") for address in config_file.readlines()]
 def process(key_value_pair):
     try:
         client = HttpClient()
-        client.set(choice(nodes), key_value_pair[0], unicode(key_value_pair[1], 'utf-8'))
+        client.set(choice(addresses), key_value_pair[0], unicode(key_value_pair[1], 'utf-8'))
     except NodeDownError:
         time.sleep(1)
         process(key_value_pair)
