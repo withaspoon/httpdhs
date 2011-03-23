@@ -82,3 +82,8 @@ Loading up a set of roughly 14000 key value pairs on 3 nodes with a replication 
 - All nodes must be known at startup and there is no way of adding nodes when the cluster is running
 - The replicas could end up on the same node more than once depending on the node positions on the keyspace ring
 - Some partitioning logic could be moved to the client to make finding the right node faster
+- There is no way of inspecting the keys
+- Deletion is unsupported
+- No logging whatsoever
+
+etc. etc.
