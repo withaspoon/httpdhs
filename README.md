@@ -32,7 +32,7 @@ To run the example cluster, run the following commands in separate terminals:
     ./server --port=1235 --replicas=2 --conf=httpdhs.conf
     ./server --port=1236 --replicas=2 --conf=httpdhs.conf
 
-To set and get values of keys:
+To set and get values using curl run:
 
     # Setting mykey=myvalue
     curl -XPUT -dvalue=myvalue http://localhost:1234/db/mykey
@@ -43,7 +43,7 @@ To set and get values of keys:
 To load the cluster with all the postal codes in Sweden (beware, this takes a long time!). Run:
 
     ./load-data
-    # Wait around 9 minutes, then...
+    # Wait 10 minutes, then...
     curl http://localhost:1234/db/74121 # 74121=Knivsta
     curl http://localhost:1234/db/12139	# 12139=Johanneshov
     # etc.
@@ -70,13 +70,15 @@ The database implementation is currently transient and a persitant version could
 
 ## Performance
 
-Loading up a set of roughly 14000 key value pairs on 3 nodes with a replication of 2 takes around 9 minutes on my MacBook Pro. This corresponds to around 25 inserts per second.
+Loading up a set of roughly 14000 key value pairs on 3 nodes with a replication of 2 takes around 10 minutes on my MacBook Pro. This corresponds to around 25 inserts per second.
 
 ## Current Limitations
 
+- The cluster can't really be distributed since it relies on the node name being called localhost
 - If a node goes down this is only noticed by the inter-communication client and should be handled by a supervisor that preferably marks them as dead
 - The ring could be heavily unbalanced and there is no support for rebalancing
 - Keys value pairs are not redistributed when a node comes back up
 - The replication is not optimal and should preferably be done using a protocol other than HTTP for performance reasons
 - All nodes must be known at startup and there is no way of adding nodes when the cluster is running
 - The replicas could end up on the same node more than once depending on the node positions on the keyspace ring
+- Some partitioning logic could be moved to the client to make finding the right node faster
