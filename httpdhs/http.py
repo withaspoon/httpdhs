@@ -9,13 +9,13 @@ class HttpServer(object):
     def __init__(self, backend):
         self._backend = backend
     
-    def run(self, port):
+    def run(self, port, max_threads):
         root = ServerHandler(self._backend)
         dispatcher = cherrypy.dispatch.RoutesDispatcher()
         dispatcher.connect('create', '/db/{key}', controller=root.db, action='create', conditions=dict(method=['PUT']))
         dispatcher.connect('read', '/db/{key}', controller=root.db, action='read', conditions=dict(method=['GET']))
         cherrypy.quickstart(root, '/', {
-            'global': { 'server.socket_port': int(port) },
+            'global': { 'server.socket_port': port, 'server.thread_pool': max_threads },
             '/db': { 'request.dispatch': dispatcher }
         })
 

@@ -7,12 +7,17 @@ from optparse import OptionParser
 
 parser = OptionParser()
 parser.add_option("-p", "--port", dest="port", help="run on port PORT", metavar="PORT")
+parser.add_option("-c", "--conf", dest="conf", help="configuration file for the cluster")
+parser.add_option("-r", "--replicas", dest="replicas", help="number of replicas", default=2)
+parser.add_option("-t", "--threads", dest="threads", help="maximum number of threads", default=50)
 (options, args) = parser.parse_args()
 
-strategy = ConsistentHashingPartitioningStrategy(
-    ["localhost:1234", "localhost:4321"], replicas=3)
+config_file = open(options.conf)
+addresses = [address.strip("\n") for address in config_file.readlines()]
+
+strategy = ConsistentHashingPartitioningStrategy(addresses, int(options.replicas))
 node_name = "localhost:%s" % (options.port)
 backend = KeyValueController(node_name, strategy)
-HttpServer(backend).run(options.port)
+HttpServer(backend).run(int(options.port), int(options.threads))
 
 print "Done."
