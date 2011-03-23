@@ -58,7 +58,7 @@ Some of the key components have been modularized to support changes in requireme
 
 ### Partitioning
 
-The partitioner can easily be changed to a more or less sophisticated variant. To support simple sharding one could simply implement a paritioner that only returns one node based on the modulus of the hash.
+The partitioner can easily be changed to a more or less sophisticated variant. To support simple sharding one could simply implement a partitioner that only returns one node based on the modulus of the hash.
 
 ### Server and client protocols
 
@@ -66,7 +66,7 @@ Server and client communication is kept in the module "http" and all backend log
 
 ### Database
 
-The database implementation is currently transient and a persitant version could "easily" be implemented and injected when the server starts.
+The database implementation is currently transient and a persistent version could "easily" be implemented and injected when the server starts.
 
 ## Performance
 
@@ -80,7 +80,7 @@ Loading up a set of roughly 14000 key value pairs on 3 nodes with a replication 
 - Keys value pairs are not redistributed when a node comes back up
 - The replication is not optimal and should preferably be done using a protocol other than HTTP for performance reasons
 - All nodes must be known at startup and there is no way of adding nodes when the cluster is running
-- The replicas could end up on the same node more than once depending on the node positions on the keyspace ring
+- The replicas could end up on the same node more than once depending on the node positions in the key space ring
 - Some partitioning logic could be moved to the client to make finding the right node faster
 - There is no way of inspecting the keys
 - Deletion is unsupported
