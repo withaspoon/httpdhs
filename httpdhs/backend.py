@@ -34,7 +34,10 @@ class KeyValueController(object):
     def set(self, key, value):
         for address in self._addresses_for_key(key):
             try:
-                self._client.set_without_replication(address, key, value)
+                if address == self._node_name:
+                    self._database.set(key, value)
+                else:
+                    self._client.set_without_replication(address, key, value)
             except NodeDownError:
                 pass
     
