@@ -1,0 +1,23 @@
+#!/usr/bin/env python
+
+import csv
+import time
+from random import choice
+from httpdhs.node import NodeDownError
+from httpdhs.http import HttpClient
+import multiprocessing
+
+postalcodes = csv.reader(open('postalcodes.csv', 'r'), delimiter='\t')
+key_value_pairs = list(postalcodes)
+
+nodes = ["localhost:1234", "localhost:1235", "localhost:1236"]
+def process(key_value_pair):
+    try:
+        client = HttpClient()
+        client.set(choice(nodes), key_value_pair[0], unicode(key_value_pair[1], 'utf-8'))
+    except NodeDownError:
+        time.sleep(1)
+        process(key_value_pair)
+
+pool = multiprocessing.Pool(processes=15)
+pool.map(process, key_value_pairs)
