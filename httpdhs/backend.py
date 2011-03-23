@@ -28,17 +28,17 @@ class KeyValueController(object):
         self._client = client
         self._database = database
     
-    def _addresses_for_key(self, key):
+    def _node_addresses_for_key(self, key):
         return self._partitioning_strategy.find_node_addresses_for_key(key)
     
     def set(self, key, value):
-        for address in self._addresses_for_key(key):
+        for address in self._node_addresses_for_key(key):
             try:
-                self._set_for_address(address, key, value)
+                self._set_value_on_node(address, key, value)
             except NodeDownError:
                 pass
     
-    def _set_for_address(self, address, key, value):
+    def _set_value_on_node(self, address, key, value):
         if address == self._node_name:
             self._database.set(key, value)
         else:
@@ -48,13 +48,13 @@ class KeyValueController(object):
         self._database.set(key, value)
         
     def get(self, key):
-        for address in self._addresses_for_key(key):
+        for address in self._node_addresses_for_key(key):
             try:
-                return self._get_for_address(address, key)
+                return self._get_value_from_node(address, key)
             except NodeDownError:
                 pass
     
-    def _get_for_address(self, address, key):
+    def _get_value_from_node(self, address, key):
         if address == self._node_name:
             return self._database.get(key)
         else:
