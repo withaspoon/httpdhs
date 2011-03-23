@@ -33,7 +33,7 @@ class TestController(unittest.TestCase):
         
         self.assertEqual('myvalue', controller.get('mykey'))
     
-    def test_should_return_query_another_node_if_the_node_is_not_the_current_node(self):
+    def test_should_query_another_node_if_the_node_is_not_the_current_node(self):
         strategy = Mock()
         strategy.find_node_addresses_for_key.return_value = ['node2', 'node1']
         client = Mock()
