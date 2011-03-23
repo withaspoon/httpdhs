@@ -16,21 +16,25 @@ class HttpServer(object):
     
     def run(self, port, max_threads):
         root = ServerHandler(self._backend)
-        dispatcher = cherrypy.dispatch.RoutesDispatcher()
-        dispatcher.connect('create', '/db/{key}', controller=root.db, action='create', conditions=dict(method=['PUT']))
-        dispatcher.connect('read', '/db/{key}', controller=root.db, action='read', conditions=dict(method=['GET']))
+        dispatcher = self._create_dispatcher(root)
         cherrypy.quickstart(root, '/', {
             'global': { 'server.socket_port': port, 'server.thread_pool': max_threads },
             '/db': { 'request.dispatch': dispatcher }
         })
+    
+    def _create_dispatcher(self, root):
+        dispatcher = cherrypy.dispatch.RoutesDispatcher()
+        dispatcher.connect('create', '/db/{key}', controller=root.db, action='update', conditions=dict(method=['PUT']))
+        dispatcher.connect('read', '/db/{key}', controller=root.db, action='read', conditions=dict(method=['GET']))
+        return dispatcher
 
 class DatabaseHandler(object):
     """Cherrypy handler for database access"""
     
+    exposed = True
+    
     def __init__(self, backend):
         self._backend = backend
-    
-    exposed = True
     
     def read(self, key):
         value = self._backend.get(key)
@@ -39,7 +43,7 @@ class DatabaseHandler(object):
         else:
             raise cherrypy.HTTPError(404)
     
-    def create(self, key, value, direct='false'):
+    def update(self, key, value, direct='false'):
         if direct == 'true':
             self._backend.set_direct(key, value)
         else:
