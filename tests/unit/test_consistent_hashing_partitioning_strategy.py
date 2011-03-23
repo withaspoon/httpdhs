@@ -19,7 +19,7 @@ class TestWithOneNode(unittest.TestCase):
         self.assertItemsEqual(["node1.example:1234"], partitioner.find_node_addresses_for_key("def"))
 
 class TestWithSeveralNodes(unittest.TestCase):
-    def given_a_partitioning_strategy_with(self, replicas):
+    def given_a_partitioning_strategy(self):
         hash_code_generator = HashCodeGeneratorMock({
             "node1.example:1234#0": "10",
             "node1.example:1234#1": "20",
@@ -30,13 +30,13 @@ class TestWithSeveralNodes(unittest.TestCase):
             "node3.example:1234#1": "60"})
         return ConsistentHashingPartitioningStrategy(
             ["node1.example:1234", "node2.example:1234", "node3.example:1234"],
-            replicas, hash_code_generator)
+            2, hash_code_generator)
     
     def test_should_return_a_number_of_sequential_nodes_equal_to_the_number_of_replicas(self):
-        partitioner = self.given_a_partitioning_strategy_with(replicas=2)
+        partitioner = self.given_a_partitioning_strategy()
         self.assertEqual(2, len(partitioner.find_node_addresses_for_key("abc")))
     
     def test_should_treat_the_keyspace_as_a_ring(self):
-        partitioner = self.given_a_partitioning_strategy_with(replicas=2)
+        partitioner = self.given_a_partitioning_strategy()
         self.assertItemsEqual(["node3.example:1234", "node1.example:1234"],
                               partitioner.find_node_addresses_for_key("abc"))
