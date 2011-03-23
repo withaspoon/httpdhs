@@ -28,8 +28,7 @@ class ConsistentHashingPartitioningStrategy(object):
         self._keyspace_ring = sorted(self._keyspace_ring)
 
     def find_node_addresses_for_key(self, key):
-        hash_code = self._hash_code_generator.hash(key)
-        index = bisect.bisect_right(self._keyspace_ring, [hash_code, key])
+        index = self._find_index_for_key_in_ring(key)
         
         addresses = []
         for n in xrange(self._replicas):
@@ -39,3 +38,7 @@ class ConsistentHashingPartitioningStrategy(object):
             index += 1
         
         return set(addresses)
+
+    def _find_index_for_key_in_ring(self, key):
+        hash_code = self._hash_code_generator.hash(key)
+        return bisect.bisect_right(self._keyspace_ring, [hash_code, key])
