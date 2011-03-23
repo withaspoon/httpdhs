@@ -2,11 +2,19 @@ import sha
 import bisect
 
 class Sha1HashCodeGenerator(object):
+    """Class that generates SHA1 hashes"""
+    
     def hash(self, what):
         return sha.new(what).hexdigest()
 
 class ConsistentHashingPartitioningStrategy(object):
-    def __init__(self, node_addresses, replicas, hash_code_generator = Sha1HashCodeGenerator()):
+    """Paritioning strategy that uses consistent hashing.
+    
+    Keeps a sorted list of nodes spread out over a ring representing the
+    keyspace. More information on wikipedia:
+    http://en.wikipedia.org/wiki/Consistent_hashing"""
+    
+    def __init__(self, node_addresses, replicas, hash_code_generator=Sha1HashCodeGenerator()):
         self._replicas = replicas
         self._hash_code_generator = hash_code_generator
         self._keyspace_ring = []

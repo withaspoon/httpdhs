@@ -2,6 +2,8 @@ from node import NodeDownError
 from http import HttpClient
 
 class KeyValueDatabase(object):
+    """Simple transient key value database class."""
+    
     def __init__(self):
         self._table = {}
     
@@ -13,6 +15,13 @@ class KeyValueDatabase(object):
             return self._table[key]
 
 class KeyValueController(object):
+    """Controller for node and database querying.
+    
+    KeyValueController is the controlling class for a single node and is
+    dependent on a partitioning strategy to find which node to set or get
+    a key value pair from. Inter-node communication is done using the passed
+    in client."""
+    
     def __init__(self, node_name, partitioning_strategy, client=HttpClient(), database=KeyValueDatabase()):
         self._node_name = node_name
         self._partitioning_strategy = partitioning_strategy

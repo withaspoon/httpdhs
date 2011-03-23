@@ -6,6 +6,11 @@ from cherrypy import request
 from cherrypy import dispatch
 
 class HttpServer(object):
+    """Entry class for the http server interface.
+    
+    Sets up routes and configures the web server for database access. After
+    calling run the method never returns."""
+    
     def __init__(self, backend):
         self._backend = backend
     
@@ -20,6 +25,8 @@ class HttpServer(object):
         })
 
 class DatabaseHandler(object):
+    """Cherrypy handler for database access"""
+    
     def __init__(self, backend):
         self._backend = backend
     
@@ -41,10 +48,14 @@ class DatabaseHandler(object):
         
 
 class ServerHandler(object):
+    """Root cherrypy handler"""
+    
     def __init__(self, backend):
         self.db = DatabaseHandler(backend)
 
 class HttpClient(object):
+    """HTTP Client for querying the key value database using REST"""
+    
     def get(self, address, key):
         result = self._http_get(address, key)
         if "=" in result:
